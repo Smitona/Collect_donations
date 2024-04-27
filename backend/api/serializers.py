@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from drf_extra_fields.fields import Base64ImageField
 
-from api.models import Collect, Payment, Goals, User
+from api.models import Collect, Payment, Goal, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -19,20 +19,24 @@ class UserSerializer(serializers.ModelSerializer):
 
 class GoalsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Goals
+        model = Goal
         fields = (
             'id',
             'name',
         )
+
 
 class PaymentSerializer(serializers.ModelSerializer):
     donator = serializers.StringRelatedField(
         read_only=True,
         default=serializers.CurrentUserDefault()
     )
-    donations_to = serializers.
+    donations_to = serializers.PrimaryKeyRelatedField(
+        queryset=Collect.objects.all(),
+        source='collect.id'
+    )
 
-    class Meta: 
+    class Meta:
         model = Payment
         fields = (
             'amount',
@@ -59,7 +63,7 @@ class CollectSerializer(serializers.ModelSerializers):
     donators = serializers.IntegerField(read_only=True)
     collected = serializers.IntegerField(read_only=True)
 
-    class Meta: 
+    class Meta:
         model = Collect
         fields = (
             'id',
