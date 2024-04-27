@@ -47,12 +47,40 @@ class PaymentSerializer(serializers.ModelSerializer):
         )
 
 
-class CollectSerializer(serializers.ModelSerializers):
+class FeedSerializer(serializers.Modelserializer):
+    class Meta:
+        model = Payment
+        fields = (
+            'amount',
+            'donator',
+            'date'
+        )
+
+
+class CollectListeSerializer(serializers.ModelSerializers):
     author = serializers.StringRelatedField(
         read_only=True,
         default=serializers.CurrentUserDefault()
     )
-    donations = PaymentSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Collect
+        fields = (
+            'title',
+            'author',
+            'image',
+            'goal',
+            'goal_amount',
+            'due_to',
+        )
+
+
+class CollectCreateSerializer(serializers.ModelSerializers):
+    author = serializers.StringRelatedField(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+    donations = FeedSerializer(many=True, read_only=True)
 
     image = Base64ImageField(required=True)
     goal = GoalsSerializer(many=False)
@@ -73,6 +101,7 @@ class CollectSerializer(serializers.ModelSerializers):
             'goal',
             'goal_amount',
             'due_to',
+            'description',
             'donators',
             'collected',
             'donations'

@@ -33,7 +33,7 @@ class Collect(models.Model):
         Goal, on_delete=models.CASCADE,
         related_name='collect_goal'
     )
-    goal_amount = models.PositiveIntegerField(blank=True)
+    goal_amount = models.PositiveIntegerField(blank=True, default=None)
     description = models.TextField()
     due_to = models.DateTimeField()
 
@@ -55,10 +55,11 @@ class Payment(models.Model):
     amount = models.PositiveIntegerField()
     comment = models.CharField()
     donator = models.ForeignKey(
-        User, on_delete=models.CASCADE
+        User, on_delete=models.CASCADE,
     )
     donation_to = models.ForeignKey(
-        Collect, on_delete=models.CASCADE
+        Collect, on_delete=models.CASCADE,
+        related_name='donation'
     )
     date = models.DateTimeField(auto_now_add=True)
 
