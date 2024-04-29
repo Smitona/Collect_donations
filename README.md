@@ -14,7 +14,7 @@
     ```
 2. Перейти в директорию проекта и создать env. файл с переменные по примеру env_example:
     ```
-    cd Collect_donations
+    cd Collect_donations/
     ```
 3. Перейти в папку с файлом docker-compose и запустить проект:
    ```
