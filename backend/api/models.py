@@ -42,9 +42,6 @@ class Collect(models.Model):
     def __str__(self):
         return self.title[:30]
 
-    def formatted_text(self):
-        return '<br>'.join(self.description.splitlines())
-
 
 class Payment(models.Model):
     """Модель Платежа (донации)."""

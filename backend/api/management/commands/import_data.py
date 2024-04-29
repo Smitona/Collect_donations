@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
         self.import_csv_data(
             csv_path, 'collects.csv',
-            self.import_goals
+            self.import_collects
         )
         self.stdout.write(
             self.style.SUCCESS(

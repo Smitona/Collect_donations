@@ -1,0 +1,50 @@
+version: '3.3'
+
+volumes:
+  collect_pg_data:
+  static:
+  media:
+
+services:
+
+  db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - collect_pg_data:/var/lib/postgresql/data
+  
+  backend:
+    depends_on:
+      - db
+    image: smitona/collect_backend
+    env_file: .env
+    volumes:
+      - static:/app/backend_static/
+      - media:/media/
+    command: >
+            bash -c "python manage.py migrate &&
+                     python manage.py import_data &&
+                     python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+
+  redis:
+    depends_on:
+      - backend
+    restart: unless-stopped
+    image: redis:7.0.5-alpine 
+    expose:
+      - 6379
+  
+  celery:
+    depends_on:
+      - redis
+      - backend
+    restart: unless-stopped
+    build:
+      context: ./backend
+    env_file: .env
+    command: celery -A backend worker -l info -P gevent
+
+
+  

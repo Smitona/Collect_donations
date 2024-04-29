@@ -1,0 +1,16 @@
+SECRET_KEY='secret'
+
+EMAIL_HOST_USER='user@yandex.ru'
+EMAIL_HOST_PASSWORD='password'
+
+
+POSTGRES_DB=collect_db
+POSTGRES_USER=collect_user
+POSTGRES_PASSWORD=collect_password
+DB_NAME=collect
+
+DB_HOST=db
+DB_PORT=5432
+
+CELERY_BROKER_URL='redis://redis:6379/0'
+CELERY_RESULT_BACKEND='redis://redis:6379/0'
