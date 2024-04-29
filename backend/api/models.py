@@ -4,23 +4,20 @@ from django.db import models
 User = get_user_model()
 
 
-class Goal(models.Model):
-    """Модель для целей."""
-    name = models.CharField()
-
-    class Meta:
-        verbose_name = 'Цель'
-        verbose_name_plural = 'Цели'
-        ordering = ('name',)
-
-    def __str__(self):
-        return self.name
+GOALS = (
+    ('Wedding', 'Свадьба'),
+    ('PC Upgrade', 'Апгрейд ПК'),
+    ('Treatment', 'На лечение'),
+    ('For a dream life', 'На красивую жизнь'),
+    ('Birthday', 'День рождения'),
+    ('Animal Shelter', 'Приют для животных'),
+)
 
 
 class Collect(models.Model):
     """Модель Группового денежного сбора."""
 
-    title = models.CharField()
+    title = models.CharField(max_length=200)
     author = models.ForeignKey(
         User, on_delete=models.CASCADE,
         related_name='collect'
@@ -29,9 +26,9 @@ class Collect(models.Model):
         upload_to='donations/images/',
         null=False, blank=True
     )
-    goal = models.ForeignKey(
-        Goal, on_delete=models.CASCADE,
-        related_name='collect_goal'
+    goal = models.CharField(
+        max_length=200,
+        choices=GOALS
     )
     goal_amount = models.PositiveIntegerField(blank=True, default=None)
     description = models.TextField()
@@ -53,13 +50,14 @@ class Payment(models.Model):
     """Модель Платежа (донации)."""
 
     amount = models.PositiveIntegerField()
-    comment = models.CharField()
+    comment = models.CharField(max_length=200)
     donator = models.ForeignKey(
         User, on_delete=models.CASCADE,
+        related_name='donations',
     )
     donation_to = models.ForeignKey(
         Collect, on_delete=models.CASCADE,
-        related_name='donation'
+        related_name='donations'
     )
     date = models.DateTimeField(auto_now_add=True)
 
