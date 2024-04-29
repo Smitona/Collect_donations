@@ -16,7 +16,7 @@ class CollectViewSet(viewsets.ModelViewSet):
         author = self.request.user
         serializer.save(author=author)
         user_email = author.email
-        send_collect_created(user_email)
+        send_collect_created.delay(user_email)
 
     def get_queryset(self):
         collects = Collect.objects.all().select_related('author')
@@ -41,7 +41,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
             donation_to=donation_to
         )
         user_email = donator.email
-        send_donation_created(user_email)
+        send_donation_created.delay(user_email)
 
     def get_queryset(self, *args, **kwargs):
         collect_id = self.kwargs.get('collect_id')

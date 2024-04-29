@@ -1,10 +1,10 @@
-from django.core.mail import send_mail
-
 from backend import settings
 from celery import shared_task
 
+from django.core.mail import send_mail
 
-#@shared_task
+
+@shared_task
 def send_collect_created(user_email):
     send_mail(
         'Групповой сбор',
@@ -15,7 +15,7 @@ def send_collect_created(user_email):
     )
 
 
-#@shared_task
+@shared_task
 def send_donation_created(user_email):
     send_mail(
         'Платёж (донация)',

@@ -5,6 +5,7 @@ aiosignal==1.3.1
 amqp==5.2.0
 annotated-types==0.6.0
 asgiref==3.8.1
+async-timeout==4.0.3
 asyncio==3.4.3
 attrs==23.2.0
 billiard==4.2.0
@@ -32,6 +33,8 @@ drf-extra-fields==3.7.0
 drf-yasg==1.21.7
 filetype==1.2.0
 frozenlist==1.4.1
+gevent==24.2.1
+greenlet==3.0.3
 gunicorn==20.1.0
 idna==3.6
 inflection==0.5.1
@@ -54,9 +57,9 @@ python-dotenv==1.0.1
 python3-openid==3.2.0
 pytz==2024.1
 PyYAML==6.0.1
+redis==5.0.4
 requests==2.31.0
 requests-oauthlib==2.0.0
-setuptools==69.5.1
 six==1.16.0
 social-auth-app-django==4.0.0
 social-auth-core==4.5.4
@@ -68,3 +71,5 @@ urllib3==2.2.1
 vine==5.1.0
 wcwidth==0.2.13
 yarl==1.9.4
+zope.event==5.0
+zope.interface==6.3
