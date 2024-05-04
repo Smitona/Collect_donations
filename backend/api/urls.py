@@ -1,26 +1,41 @@
-from django.urls import include, path
-from django.views.decorators.cache import cache_page
-from rest_framework.routers import SimpleRouter
+from django.urls import include, path, re_path
 
-from api.views import CollectViewSet, PaymentViewSet
-
-
-router = SimpleRouter()
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 app_name = 'api'
 
-router.register(
-    r'collects',
-    CollectViewSet,
-    basename='collects'
-)
-
-router.register(
-    r'collects/(?P<collect_id>\d+)/payments',
-    PaymentViewSet,
-    basename='payments'
-)
-
 urlpatterns = [
-    path('', include(router.urls)),
+    path('api_v1/', include('collect.urls')),
+]
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Collect API",
+      default_version='v1',
+      description="Документация для приложения api проекта Групповой сбор",
+      contact=openapi.Contact(email="admin@ya.ru"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
+
+urlpatterns += [
+   re_path(
+       r'^swagger(?P<format>\.json|\.yaml)$',
+       schema_view.without_ui(cache_timeout=0),
+       name='schema-json'
+   ),
+   re_path(
+       r'^swagger/$',
+       schema_view.with_ui('swagger', cache_timeout=0),
+       name='schema-swagger-ui'
+   ),
+   re_path(
+       r'^redoc/$',
+       schema_view.with_ui('redoc', cache_timeout=0),
+       name='schema-redoc'
+   ),
 ]

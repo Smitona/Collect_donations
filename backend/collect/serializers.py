@@ -3,7 +3,7 @@ from drf_extra_fields.fields import Base64ImageField
 
 from djoser.serializers import UserSerializer
 
-from api.models import Collect, Payment, GOALS
+from collect.models import Collect, Payment, GOALS
 
 
 class PaymentSerializer(serializers.ModelSerializer):

@@ -4,7 +4,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from api.models import Collect, Payment
+from Collect_donations.backend.collect.models import Collect, Payment
 
 
 class Command(BaseCommand):

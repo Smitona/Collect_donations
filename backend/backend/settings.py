@@ -29,12 +29,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'django_celery_beat',
     'django_celery_results',
     'drf_yasg',
     'rest_framework',
     'django_filters',
     'api.apps.ApiConfig',
+    'collect.apps.ApiConfig'
 ]
 
 MIDDLEWARE = [
@@ -74,9 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -154,16 +151,17 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
-#CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 CELERY_ALWAYS_EAGER = True
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-# MAIL_USE_SSL = True
+EMAIL_BACKEND = os.getenv(
+    'EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend'
+)
+EMAIL_HOST = os.getenv('EMAIL_HOST', default='smtp.yandex.ru')
+EMAIL_PORT = os.getenv('EMAIL_PORT', default=587)
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', default=True)
+MAIL_USE_SSL = os.getenv('MAIL_USE_SSL', default=False)
 
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', default='user')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', default='password')
