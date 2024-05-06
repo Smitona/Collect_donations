@@ -5,12 +5,12 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 
-# RUN pip install poetry
+RUN pip install --no-cache-dir poetry
 
-# COPY poetry.lock pyproject.toml ./
-COPY requirements.txt .
-RUN pip install -r requirements.txt --no-cache-dir
+COPY poetry.lock pyproject.toml /app/
+
+RUN poetry config virtualenvs.create false && poetry install --no-interaction
 
 COPY . .
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi"]
+CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi"]

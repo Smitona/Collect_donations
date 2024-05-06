@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 
-from djoser.serializers import UserSerializer
+from django.db.models import Count, Sum
 
-from collect.models import Collect, Payment, GOALS
+from collect.models import Collect, Payment, GOALS, User
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -23,7 +23,9 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class FeedSerializer(serializers.ModelSerializer):
-    donator = UserSerializer(read_only=True)
+    donator = serializers.SlugRelatedField(
+        queryset=User.objects.all(), slug_field='username',
+    )
 
     class Meta:
         model = Payment
@@ -35,45 +37,51 @@ class FeedSerializer(serializers.ModelSerializer):
 
 
 class CollectListSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
     author = serializers.StringRelatedField(
         read_only=True,
         default=serializers.CurrentUserDefault()
     )
+    title = serializers.CharField()
     image = Base64ImageField(required=True)
-
     goal = serializers.CharField()
     goal_amount = serializers.IntegerField(read_only=False)
     due_to = serializers.DateTimeField()
-    collected = serializers.IntegerField(read_only=True)
+    donators = serializers.IntegerField()
+    collected = serializers.IntegerField()
 
     class Meta:
         model = Collect
         fields = (
+            'id',
             'title',
             'author',
             'image',
             'goal',
             'goal_amount',
-            'collected',
             'due_to',
+            'donators',
+            'collected',
         )
 
 
 class CollectSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
     author = serializers.StringRelatedField(
         read_only=True,
         default=serializers.CurrentUserDefault()
     )
-    donations = FeedSerializer(many=True, read_only=True)
 
+    title = serializers.CharField()
     image = Base64ImageField(required=True)
     goal = serializers.ChoiceField(choices=GOALS)
     goal_amount = serializers.IntegerField(read_only=False)
     due_to = serializers.DateTimeField()
-    description = serializers.SerializerMethodField()
+    description = serializers.CharField()
 
-    donators = serializers.SerializerMethodField()
-    collected = serializers.SerializerMethodField()
+    donators = serializers.IntegerField()
+    collected = serializers.IntegerField()
+    payments = FeedSerializer(many=True, read_only=True)
 
     class Meta:
         model = Collect
@@ -88,19 +96,5 @@ class CollectSerializer(serializers.ModelSerializer):
             'description',
             'donators',
             'collected',
-            'donations'
+            'payments',
         )
-
-    @staticmethod
-    def get_description(obj):
-        return obj.formatted_text()
-
-    def get_donators(self, obj):
-        donations_list = obj.donations.values('donator').distinct()
-        donations_count = donations_list.count()
-        return donations_count
-
-    def get_collected(self, obj):
-        donations = obj.donations.all()
-        collected = sum(donation.amount for donation in donations)
-        return collected

@@ -4,7 +4,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from Collect_donations.backend.collect.models import Collect, Payment
+from collect.models import Collect, Payment, User
 
 
 class Command(BaseCommand):
@@ -18,6 +18,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         csv_path = options['path'] or str(
             Path(settings.BASE_DIR) / 'data',
+        )
+
+        self.import_csv_data(
+            csv_path, 'users.csv',
+            self.import_users
+        )
+        self.stdout.write(
+            self.style.SUCCESS(
+                'Users imported successfully.'
+            )
         )
 
         self.import_csv_data(
@@ -42,30 +52,51 @@ class Command(BaseCommand):
 
     def import_csv_data(self, csv_path, filename, import_func):
         file_path = Path(csv_path) / filename
-        with open(file_path, 'r', encoding='utf-8') as file:
-            csv_data = csv.DictReader(file)
+        with open(file_path, 'r', newline='', encoding='utf-8') as file:
+            csv_data = csv.DictReader(file, delimiter=',')
             import_func(csv_data)
 
+    def import_users(self, csv_data):
+        try:
+            if not User.objects.all().exists():
+                users = [User(
+                    email=row['email'],
+                    username=row['username'],
+                    password=row['password']
+                ) for row in csv_data
+                ]
+                User.objects.bulk_create(users)
+        except ValueError:
+            print('Users already imported.')
+
     def import_collects(self, csv_data):
-        collects = [Collect(
-            title=row['title'],
-            author=row['author'],
-            image=row['image'],
-            goal=row['goal'],
-            goal_amount=row['goal_amount'],
-            description=row['description'],
-            due_to=row['due_to']
-        ) for row in csv_data
-        ]
-        Collect.objects.bulk_create(collects, )
+        try:
+            if not Collect.objects.all().exists():
+                collects = [Collect(
+                    title=row['title'],
+                    author=User.objects.get(id=row['author']),
+                    image=row['image'],
+                    goal=row['goal'],
+                    goal_amount=row['goal_amount'],
+                    description=row['description'],
+                    due_to=row['due_to']
+                ) for row in csv_data
+                ]
+                Collect.objects.bulk_create(collects)
+        except ValueError:
+            print('Collects already imported.')
 
     def import_payments(self, csv_data):
-        payments = [Payment(
-            amount=row['amount'],
-            comment=row['comment'],
-            donator=row['donator'],
-            donation_to=row['donation_to'],
-            date=row['date'],
-        ) for row in csv_data
-        ]
-        Payment.objects.bulk_create(payments)
+        try:
+            if not Payment.objects.all().exists():
+                payments = [Payment(
+                    amount=row['amount'],
+                    comment=row['comment'],
+                    donator=User.objects.get(id=row['donator']),
+                    donation_to=Collect.objects.get(id=row['donation_to']),
+                    date=row['date'],
+                ) for row in csv_data
+                ]
+                Payment.objects.bulk_create(payments)
+        except ValueError:
+            print('Payments already imported.')

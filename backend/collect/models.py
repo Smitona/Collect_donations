@@ -50,11 +50,11 @@ class Payment(models.Model):
     comment = models.CharField(max_length=200)
     donator = models.ForeignKey(
         User, on_delete=models.CASCADE,
-        related_name='donations',
+        #related_name='payments',
     )
     donation_to = models.ForeignKey(
         Collect, on_delete=models.CASCADE,
-        related_name='donations'
+        related_name='payments'
     )
     date = models.DateTimeField(auto_now_add=True)
 

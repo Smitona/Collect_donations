@@ -4,10 +4,10 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-app_name = 'api'
+app_name = 'api_v1'
 
 urlpatterns = [
-    path('api/v1/', include('collect.urls')),
+    path('', include('collect.urls')),
 ]
 
 schema_view = get_schema_view(
