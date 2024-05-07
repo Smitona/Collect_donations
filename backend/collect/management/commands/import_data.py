@@ -1,8 +1,12 @@
 import csv
 from pathlib import Path
+import urllib
+from urllib.parse import urlparse
+import urllib.request
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.core.files import File
 
 from collect.models import Collect, Payment, User
 
@@ -72,16 +76,21 @@ class Command(BaseCommand):
     def import_collects(self, csv_data):
         try:
             if not Collect.objects.all().exists():
-                collects = [Collect(
-                    title=row['title'],
-                    author=User.objects.get(id=row['author']),
-                    image=row['image'],
-                    goal=row['goal'],
-                    goal_amount=row['goal_amount'],
-                    description=row['description'],
-                    due_to=row['due_to']
-                ) for row in csv_data
-                ]
+                for row in csv_data:
+                    collects = Collect(
+                        title=row['title'],
+                        author=User.objects.get(id=row['author']),
+                        goal=row['goal'],
+                        goal_amount=row['goal_amount'],
+                        description=row['description'],
+                        due_to=row['due_to']
+                    )
+
+                    img = urllib.request.urlretrieve(row['image'])
+                    filename = urlparse(row['image']).path.split('/')[-1]
+
+                    collects.image.save(filename, File(open(img[0])))
+
                 Collect.objects.bulk_create(collects)
         except ValueError:
             print('Collects already imported.')

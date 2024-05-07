@@ -19,25 +19,20 @@ services:
     image: smitona/collect_backend
     env_file: .env
     volumes:
-      - static:/backend_static/
+      - static:/backend_static/static/
       - media:/media
     command: >
-            bash -c "python manage.py collectstatic &&
-                     cp -r /app/collected_static/. /backend_static/ &&
-                     python manage.py migrate &&
-                     python manage.py import_data &&
+            bash -c "python manage.py migrate &&
                      gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
-    ports:
-      - "8000:8000"
 
   nginx:
     depends_on:
       - backend
     build: ./nginx/
     ports:
-      - 80:80
+      - "8000:80"
     volumes:
-      - static:/static
+      - static:/static/
       - media:/media
 
   redis:

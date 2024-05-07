@@ -18,10 +18,22 @@
     ```
 3. Перейти в папку с файлом docker-compose и запустить проект:
    ```
-   docker-compose up
+   docker-compose up -d
+   ```
+4. Скопировать статику бекенда:
+   ```
+   docker compose exec backend python manage.py collectstatic
+   ```
+   ***Для Windows вторая команда в PowerShell***
+   ```
+   docker compose exec backend cp -r /static/. /backend_static/static/
+   ```
+5. Импортировать тестовые данные в БД:
+   ```
+   docker compose exec python manage.py import_data
    ```
 
-Документацию можно будет открыть по ссылке [http://127.0.0.1:8000/swagger/](http://127.0.0.1:8000/swagger/)
+Документацию можно будет открыть по ссылке [http://127.0.0.1:8000/swagger/](http://127.0.0.1:8000/api/v1/swagger/)
 
 ---
 ### Стек ⚡
