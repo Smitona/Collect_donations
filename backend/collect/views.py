@@ -1,14 +1,12 @@
-from django.shortcuts import get_object_or_404
-from django.db.models import Count, Sum
+from rest_framework import permissions, viewsets
 
-from rest_framework import viewsets, permissions
+from django.db.models import Count, Sum
+from django.shortcuts import get_object_or_404
 
 from collect.models import Collect
-from collect.serializers import (
-    CollectSerializer, CollectListSerializer,
-    PaymentSerializer, FeedSerializer
-)
-from collect.tasks import send_donation_created, send_collect_created
+from collect.serializers import (CollectListSerializer, CollectSerializer,
+                                 FeedSerializer, PaymentSerializer)
+from collect.tasks import send_collect_created, send_donation_created
 
 
 class CollectViewSet(viewsets.ModelViewSet):

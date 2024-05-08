@@ -1,6 +1,5 @@
-from django.contrib import admin
-
 from collect.models import Collect, Payment
+from django.contrib import admin
 
 
 class BaseAdmin(admin.ModelAdmin):

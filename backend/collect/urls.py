@@ -3,7 +3,6 @@ from rest_framework.routers import SimpleRouter
 
 from collect.views import CollectViewSet, PaymentViewSet
 
-
 router = SimpleRouter()
 
 app_name = 'collect'

@@ -1,9 +1,7 @@
-from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
 
-from django.db.models import Count, Sum
-
-from collect.models import Collect, Payment, GOALS, User
+from collect.models import GOALS, Collect, Payment, User
 
 
 class PaymentSerializer(serializers.ModelSerializer):
