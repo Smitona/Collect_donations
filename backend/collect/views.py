@@ -19,8 +19,8 @@ class CollectViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         author = self.request.user
         serializer.save(author=author)
-        #user_email = author.email
-        #send_collect_created.delay(user_email)
+        user_email = author.email
+        send_collect_created.delay(user_email)
 
     def get_queryset(self):
         collects = Collect.objects.all().select_related('author')
@@ -48,8 +48,8 @@ class PaymentViewSet(viewsets.ModelViewSet):
             donator=donator,
             donation_to=donation_to
         )
-        #user_email = donator.email
-        #send_donation_created.delay(user_email)
+        user_email = donator.email
+        send_donation_created.delay(user_email)
 
     def get_serializer_class(self):
         if self.action in ['post', 'patch', 'put']:

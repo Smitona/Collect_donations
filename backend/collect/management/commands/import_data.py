@@ -77,7 +77,7 @@ class Command(BaseCommand):
         try:
             if not Collect.objects.all().exists():
                 for row in csv_data:
-                    collects = Collect(
+                    collect = Collect.objects.create(
                         title=row['title'],
                         author=User.objects.get(id=row['author']),
                         goal=row['goal'],
@@ -92,9 +92,7 @@ class Command(BaseCommand):
                     buf = BytesIO()
                     buf.write(img.content)
 
-                    collects.image.save(filename, File(buf, img))
-
-                    Collect.objects.bulk_create(collects)
+                    collect.image.save(filename, File(buf, img))
 
         except ValueError:
             print('Collects already imported.')
