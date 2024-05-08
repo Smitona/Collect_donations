@@ -33,7 +33,7 @@
    docker compose exec python manage.py import_data
    ```
 
-Документацию можно будет открыть по ссылке [http://127.0.0.1:8000/swagger/](http://127.0.0.1:8000/api/v1/swagger/)
+Документацию можно будет открыть по ссылке [http://127.0.0.1:8000/api/v1/swagger/](http://127.0.0.1:8000/api/v1/swagger/)
 
 ---
 ### Стек ⚡

@@ -1,8 +1,8 @@
 import csv
 from pathlib import Path
-import urllib
-from urllib.parse import urlparse
-import urllib.request
+
+import requests
+from io import BytesIO
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -86,12 +86,16 @@ class Command(BaseCommand):
                         due_to=row['due_to']
                     )
 
-                    img = urllib.request.urlretrieve(row['image'])
-                    filename = urlparse(row['image']).path.split('/')[-1]
+                    filename = row['image'].split('/')[-1]
 
-                    collects.image.save(filename, File(open(img[0])))
+                    img = requests.get(row['image'], verify=False)
+                    buf = BytesIO()
+                    buf.write(img.content)
 
-                Collect.objects.bulk_create(collects)
+                    collects.image.save(filename, File(buf, img))
+
+                    Collect.objects.bulk_create(collects)
+
         except ValueError:
             print('Collects already imported.')
 
